@@ -33,9 +33,8 @@ export default function Navbar() {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const [drawerOpen, setDrawerOpen] = useState(false)
 
-  const isActive = (path) =>
-    pathname === path || pathname.startsWith(path + '/')
-
+const isActive = (path: string) =>
+  pathname === path || pathname.startsWith(path + '/')
   const navLinks = (
     <>
       {Links.map((link) => (
@@ -77,14 +76,16 @@ export default function Navbar() {
                 },
               }}
             >
-              <ListItemText
-                primary={link.element}
-                slotProps={{
-                  primary: {
-                    fontWeight: isActive(link.path) ? 'bold' : 'normal',
-                  },
-                }}
-              />
+<ListItemText
+  primary={link.element}
+  slotProps={{
+    primary: {
+      sx: {
+        fontWeight: isActive(link.path) ? 'bold' : 'normal',
+      },
+    },
+  }}
+/>
             </ListItemButton>
           </ListItem>
         ))}

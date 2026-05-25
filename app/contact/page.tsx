@@ -1,3 +1,4 @@
+// app/contact/page.tsx
 "use client"
 import React, { useState } from 'react'
 import {
@@ -17,7 +18,30 @@ import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
 import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined'
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
 
-const contactInfo = [
+interface ContactInfo {
+  icon: React.ReactNode
+  label: string
+  value: string
+}
+
+interface FormState {
+  name: string
+  email: string
+  message: string
+}
+
+interface FormErrors {
+  name?: string
+  email?: string
+  message?: string
+}
+
+interface SnackbarState {
+  open: boolean
+  severity: 'success' | 'error'
+}
+
+const contactInfo: ContactInfo[] = [
   {
     icon: <EmailOutlinedIcon fontSize="large" color="primary" />,
     label: 'Email',
@@ -36,12 +60,12 @@ const contactInfo = [
 ]
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: '', email: '', message: '' })
-  const [errors, setErrors] = useState({})
-  const [snackbar, setSnackbar] = useState({ open: false, severity: 'success' })
+  const [form, setForm] = useState<FormState>({ name: '', email: '', message: '' })
+  const [errors, setErrors] = useState<FormErrors>({})
+  const [snackbar, setSnackbar] = useState<SnackbarState>({ open: false, severity: 'success' })
 
-  const validate = () => {
-    const newErrors = {}
+  const validate = (): FormErrors => {
+    const newErrors: FormErrors = {}
     if (!form.name.trim()) newErrors.name = 'Name is required'
     if (!form.email.trim()) {
       newErrors.email = 'Email is required'
@@ -52,12 +76,12 @@ export default function Contact() {
     return newErrors
   }
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
     setErrors((prev) => ({ ...prev, [e.target.name]: '' }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const validationErrors = validate()
     if (Object.keys(validationErrors).length > 0) {
@@ -74,26 +98,15 @@ export default function Contact() {
       <Container maxWidth="lg">
 
         {/* Page Title */}
-        <Typography
-          variant="h4"
-          fontWeight="bold"
-          textAlign="center"
-          gutterBottom
-        >
+        <Typography variant="h4" fontWeight="bold" textAlign="center" gutterBottom>
           Contact Us
         </Typography>
-        <Typography
-          variant="body1"
-          textAlign="center"
-          color="text.secondary"
-          sx={{ mb: 5 }}
-        >
+        <Typography variant="body1" textAlign="center" color="text.secondary" sx={{ mb: 5 }}>
           Have a question or feedback? We'd love to hear from you.
         </Typography>
 
+        {/* Info Cards */}
         <Grid container spacing={3} sx={{ mb: 4 }}>
-
-          {/* Contact Info Cards — same grid pattern as Brands */}
           {contactInfo.map((item) => (
             <Grid item xs={12} md={4} key={item.label}>
               <Card
@@ -131,13 +144,7 @@ export default function Contact() {
         {/* Contact Form */}
         <Grid container justifyContent="center">
           <Grid item xs={12} md={8}>
-            <Card
-              sx={{
-                p: { xs: 3, md: 5 },
-                backgroundColor: 'primary.100',
-                boxShadow: 2,
-              }}
-            >
+            <Card sx={{ p: { xs: 3, md: 5 }, backgroundColor: 'primary.100', boxShadow: 2 }}>
               <Typography variant="h5" fontWeight="bold" gutterBottom>
                 Send a Message
               </Typography>
@@ -208,7 +215,7 @@ export default function Contact() {
         onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert severity="success" onClose={() => setSnackbar((s) => ({ ...s, open: false }))}>
+        <Alert severity={snackbar.severity} onClose={() => setSnackbar((s) => ({ ...s, open: false }))}>
           Message sent successfully!
         </Alert>
       </Snackbar>
